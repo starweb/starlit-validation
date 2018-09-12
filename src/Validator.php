@@ -31,6 +31,7 @@ class Validator
         'textKey',
         'date',
         'dateTime',
+        'nullable',
         'custom'
     ];
 
@@ -126,7 +127,10 @@ class Validator
                 if (is_string($value) && (!isset($ruleProperties['trim']) || $ruleProperties['trim'] === true)) {
                     $value = trim($value);
                 }
-            // Don't validate empty values that are not set and not required
+                // allow a nullable value to be added as validated data
+            } elseif (!empty($ruleProperties['nullable']) && array_key_exists($fieldName, $data)) {
+                $value = null;
+                // Don't validate empty values that are not set and not required
             } elseif (empty($ruleProperties['required']) && empty($ruleProperties['nonEmpty'])) {
                 continue;
             } else {
@@ -326,6 +330,8 @@ class Validator
 
                     $errorMsg = $ruleContents($value);
 
+                    break;
+                case 'nullable':
                     break;
                 default:
                     throw new \InvalidArgumentException("Unknown validation rule[{$rule}]");

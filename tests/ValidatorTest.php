@@ -16,6 +16,7 @@ class ValidatorTest extends \PHPUnit_Framework_TestCase
         $rules = [];
         $rules['someField']['minLength'] = 5;
         $rules['nonRequiredField'] = [];
+        $rules['nullableField']['nullable'] = true;
 
         $this->validator = new Validator($rules);
     }
@@ -337,5 +338,23 @@ class ValidatorTest extends \PHPUnit_Framework_TestCase
     public function testGetValidRuleProperties()
     {
         $this->assertContains('required', $this->validator->getValidRuleProperties());
+    }
+
+    public function testValidateNullableValueDoesNotReturnErrorMsg()
+    {
+        $errorMsgs = $this->validator->validateValue(null, ['nullable' => true]);
+        $this->assertEmpty($errorMsgs);
+    }
+
+    public function testValidateNullableData()
+    {
+        $data = ['nullableField' => null];
+        $errorMsgs = $this->validator->validate($data);
+        $this->assertEmpty($errorMsgs);
+
+        $validatedData = $this->validator->getValidatedData();
+
+        $this->assertArrayHasKey('nullableField', $validatedData);
+        $this->assertNull($validatedData['nullableField']);
     }
 }
