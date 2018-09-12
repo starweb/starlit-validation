@@ -16,7 +16,6 @@ class ValidatorTest extends \PHPUnit_Framework_TestCase
         $rules = [];
         $rules['someField']['minLength'] = 5;
         $rules['nonRequiredField'] = [];
-        $rules['nullableField']['nullable'] = true;
 
         $this->validator = new Validator($rules);
     }
@@ -340,21 +339,41 @@ class ValidatorTest extends \PHPUnit_Framework_TestCase
         $this->assertContains('required', $this->validator->getValidRuleProperties());
     }
 
-    public function testValidateNullableValueDoesNotReturnErrorMsg()
+    /**
+     * @dataProvider provideNullableTestValues
+     */
+    public function testValidateNullableValueDoesNotReturnErrorMsg($value)
     {
-        $errorMsgs = $this->validator->validateValue(null, ['nullable' => true]);
+        $errorMsgs = $this->validator->validateValue($value, ['nullable' => true]);
         $this->assertEmpty($errorMsgs);
     }
 
-    public function testValidateNullableData()
+    public function provideNullableTestValues()
     {
-        $data = ['nullableField' => null];
+        return [
+            [null],
+            ['0'],
+            [''],
+            ['another string']
+        ];
+    }
+
+    /**
+     * @dataProvider provideNullableTestValues
+     */
+    public function testValidateNullableData($value)
+    {
+        $newFieldRules = [
+            'nullableField' => ['nullable' => true]
+        ];
+        $this->validator->addFieldsRuleProperties($newFieldRules);
+        $data = ['nullableField' => $value];
         $errorMsgs = $this->validator->validate($data);
         $this->assertEmpty($errorMsgs);
 
         $validatedData = $this->validator->getValidatedData();
 
         $this->assertArrayHasKey('nullableField', $validatedData);
-        $this->assertNull($validatedData['nullableField']);
+        $this->assertSame($value, $validatedData['nullableField']);
     }
 }
