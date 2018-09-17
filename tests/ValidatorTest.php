@@ -338,4 +338,42 @@ class ValidatorTest extends \PHPUnit_Framework_TestCase
     {
         $this->assertContains('required', $this->validator->getValidRuleProperties());
     }
+
+    /**
+     * @dataProvider provideNullableTestValues
+     */
+    public function testValidateNullableValueDoesNotReturnErrorMsg($value)
+    {
+        $errorMsgs = $this->validator->validateValue($value, ['nullable' => true]);
+        $this->assertEmpty($errorMsgs);
+    }
+
+    public function provideNullableTestValues()
+    {
+        return [
+            [null],
+            ['0'],
+            [''],
+            ['another string']
+        ];
+    }
+
+    /**
+     * @dataProvider provideNullableTestValues
+     */
+    public function testValidateNullableData($value)
+    {
+        $newFieldRules = [
+            'nullableField' => ['nullable' => true]
+        ];
+        $this->validator->addFieldsRuleProperties($newFieldRules);
+        $data = ['nullableField' => $value];
+        $errorMsgs = $this->validator->validate($data);
+        $this->assertEmpty($errorMsgs);
+
+        $validatedData = $this->validator->getValidatedData();
+
+        $this->assertArrayHasKey('nullableField', $validatedData);
+        $this->assertSame($value, $validatedData['nullableField']);
+    }
 }
