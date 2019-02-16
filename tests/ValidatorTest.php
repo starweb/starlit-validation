@@ -3,7 +3,7 @@
 namespace Starlit\Validation;
 
 use PHPUnit\Framework\TestCase;
-use Symfony\Component\Translation\TranslatorInterface;
+use Symfony\Contracts\Translation\TranslatorInterface;
 
 class ValidatorTest extends TestCase
 {

@@ -8,7 +8,7 @@
 
 namespace Starlit\Validation;
 
-use Symfony\Component\Translation\TranslatorInterface as SymfonyTranslatorInterface;
+use Symfony\Contracts\Translation\TranslatorInterface as SymfonyTranslatorInterface;
 
 /**
  * A simple validator.
