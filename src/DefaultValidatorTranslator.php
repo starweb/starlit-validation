@@ -1,4 +1,4 @@
-<?php
+<?php declare(strict_types=1);
 /**
  * Validation.
  *
@@ -31,7 +31,7 @@ class DefaultValidatorTranslator implements ValidatorTranslatorInterface
     /**
      * {@inheritdoc}
      */
-    public function trans($id, array $parameters = [])
+    public function trans($id, array $parameters = []): string
     {
         if (isset($this->texts[$id])) {
             return strtr($this->texts[$id], $parameters);

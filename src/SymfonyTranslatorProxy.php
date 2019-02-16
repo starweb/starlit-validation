@@ -1,4 +1,4 @@
-<?php
+<?php declare(strict_types=1);
 /**
  * Validation.
  *
@@ -28,7 +28,7 @@ class SymfonyTranslatorProxy implements ValidatorTranslatorInterface
     /**
      * {@inheritdoc}
      */
-    public function trans($id, array $parameters = [])
+    public function trans($id, array $parameters = []): string
     {
         return $this->symfonyTranslator->trans($id, $parameters);
     }

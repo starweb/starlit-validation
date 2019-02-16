@@ -1,10 +1,10 @@
-<?php
+<?php declare(strict_types=1);
 
 namespace Starlit\Validation;
 
 class DefaultValidatorTranslatorTest extends \PHPUnit_Framework_TestCase
 {
-    public function testTrans()
+    public function testTranslation(): void
     {
         $translator = new DefaultValidatorTranslator();
         $validator = new Validator([], $translator);
@@ -13,7 +13,7 @@ class DefaultValidatorTranslatorTest extends \PHPUnit_Framework_TestCase
         $this->assertEquals('Field must be filled in.', $result);
     }
 
-    public function testTransNonExistantTextId()
+    public function testTransNonExistantTextId(): void
     {
         $translator = new DefaultValidatorTranslator();
         $this->assertEquals('lemmeltag', $translator->trans('lemmeltag'));

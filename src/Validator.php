@@ -1,4 +1,4 @@
-<?php
+<?php declare(strict_types=1);
 /**
  * Validation.
  *
@@ -74,7 +74,7 @@ class Validator
     /**
      * @param array $newFieldsRuleProperties
      */
-    public function addFieldsRuleProperties(array $newFieldsRuleProperties)
+    public function addFieldsRuleProperties(array $newFieldsRuleProperties): void
     {
         foreach ($newFieldsRuleProperties as $fieldName => $newRuleProperties) {
             if (isset($this->fieldsRuleProperties[$fieldName])) {
@@ -91,7 +91,7 @@ class Validator
     /**
      * @param string $fieldName
      */
-    public function removeFieldRuleProperties($fieldName)
+    public function removeFieldRuleProperties($fieldName): void
     {
         unset($this->fieldsRuleProperties[$fieldName]);
     }
@@ -100,7 +100,7 @@ class Validator
      * @param string $fieldName
      * @return array
      */
-    public function getFieldRuleProperties($fieldName)
+    public function getFieldRuleProperties($fieldName): array
     {
         if (isset($this->fieldsRuleProperties[$fieldName])) {
             return $this->fieldsRuleProperties[$fieldName];
@@ -115,7 +115,7 @@ class Validator
      * @param array|null $data The data (e.g. from a form post) to be validated and set
      * @return array An array with all (if any) of error messages
      */
-    public function validate($data)
+    public function validate($data): array
     {
         $errorMsgs = [];
         foreach ($this->fieldsRuleProperties as $fieldName => $ruleProperties) {
@@ -157,7 +157,7 @@ class Validator
      * @param array $ruleProperties
      * @return string|null
      */
-    public function validateValue($value, array $ruleProperties)
+    public function validateValue($value, array $ruleProperties): ?string
     {
         // Field name
         if (isset($ruleProperties['textKey'])) {
@@ -272,7 +272,7 @@ class Validator
                         throw new \InvalidArgumentException("Invalid regexp validation rule[{$ruleContents}]");
                     }
 
-                    if ($isValueSet && !preg_match('/' . $ruleContents . '/', $value)) {
+                    if ($isValueSet && !preg_match('/' . $ruleContents . '/', (string) $value)) {
                         $errorMsg = $this->translator->trans(
                             'errorFieldInvalidFormat',
                             ['%field%' => $fieldName]
@@ -362,7 +362,7 @@ class Validator
     /**
      * @return array
      */
-    public static function getValidRuleProperties()
+    public static function getValidRuleProperties(): array
     {
         return static::$validRuleProperties;
     }
