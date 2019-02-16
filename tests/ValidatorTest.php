@@ -2,9 +2,10 @@
 
 namespace Starlit\Validation;
 
+use PHPUnit\Framework\TestCase;
 use Symfony\Component\Translation\TranslatorInterface;
 
-class ValidatorTest extends \PHPUnit_Framework_TestCase
+class ValidatorTest extends TestCase
 {
     /**
      * @var Validator
@@ -20,15 +21,27 @@ class ValidatorTest extends \PHPUnit_Framework_TestCase
         $this->validator = new Validator($rules);
     }
 
-    public function testOtherValidConstructions(): void
+    /**
+     * @dataProvider provideValidValidatorTranslators
+     */
+    public function testOtherValidConstructions(string $translatorFqcn = null): void
     {
-        new Validator();
+        $validatorTranslatorMock = $translatorFqcn ? $this->createMock($translatorFqcn) : null;
+        $validator = new Validator([], $validatorTranslatorMock);
+        $validatorReflection = new \ReflectionClass($validator);
+        $translatorProperty = $validatorReflection->getProperty('translator');
+        $translatorProperty->setAccessible(true);
+        $translator = $translatorProperty->getValue($validator);
+        $this->assertInstanceOf(ValidatorTranslatorInterface::class, $translator);
+    }
 
-        $validatorTranslatorMock = $this->createMock(ValidatorTranslatorInterface::class);
-        new Validator([], $validatorTranslatorMock);
-
-        $symfonyTranslatorMock = $this->createMock(TranslatorInterface::class);
-        new Validator([], $symfonyTranslatorMock);
+    public function provideValidValidatorTranslators(): array
+    {
+        return [
+            [null],
+            [ValidatorTranslatorInterface::class],
+            [TranslatorInterface::class]
+        ];
     }
 
     public function testInvalidConstruction(): void

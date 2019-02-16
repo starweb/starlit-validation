@@ -2,7 +2,9 @@
 
 namespace Starlit\Validation;
 
-class DefaultValidatorTranslatorTest extends \PHPUnit_Framework_TestCase
+use PHPUnit\Framework\TestCase;
+
+class DefaultValidatorTranslatorTest extends TestCase
 {
     public function testTranslation(): void
     {
