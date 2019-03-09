@@ -13,7 +13,6 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Changed
 - added php 7.3 to travis config
 
-### Changed
 
 ## [0.2.0] - 2018-09-17
 ### Added
