@@ -100,7 +100,7 @@ class Validator
      * @param string $fieldName
      * @return array
      */
-    public function getFieldRuleProperties($fieldName): array
+    public function getFieldRuleProperties(string $fieldName): array
     {
         if (isset($this->fieldsRuleProperties[$fieldName])) {
             return $this->fieldsRuleProperties[$fieldName];
