@@ -17,5 +17,5 @@ interface ValidatorTranslatorInterface
      * @param array       $parameters An array of parameters for the message
      * @return string The translated string
      */
-    public function trans($id, array $parameters = array()): string;
+    public function trans(string $id, array $parameters = []): string;
 }

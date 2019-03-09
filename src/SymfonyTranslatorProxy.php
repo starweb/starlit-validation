@@ -28,7 +28,7 @@ class SymfonyTranslatorProxy implements ValidatorTranslatorInterface
     /**
      * {@inheritdoc}
      */
-    public function trans($id, array $parameters = []): string
+    public function trans(string $id, array $parameters = []): string
     {
         return $this->symfonyTranslator->trans($id, $parameters);
     }

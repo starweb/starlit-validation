@@ -91,7 +91,7 @@ class Validator
     /**
      * @param string $fieldName
      */
-    public function removeFieldRuleProperties($fieldName): void
+    public function removeFieldRuleProperties(string $fieldName): void
     {
         unset($this->fieldsRuleProperties[$fieldName]);
     }
@@ -115,7 +115,7 @@ class Validator
      * @param array|null $data The data (e.g. from a form post) to be validated and set
      * @return array An array with all (if any) of error messages
      */
-    public function validate($data): array
+    public function validate(?array $data): array
     {
         $errorMsgs = [];
         foreach ($this->fieldsRuleProperties as $fieldName => $ruleProperties) {
@@ -350,7 +350,7 @@ class Validator
      * @param mixed  $default
      * @return array|mixed
      */
-    public function getValidatedData($key = null, $default = null)
+    public function getValidatedData(string $key = null, $default = null)
     {
         if ($key !== null) {
             return isset($this->validatedData[$key]) ? $this->validatedData[$key] : $default;

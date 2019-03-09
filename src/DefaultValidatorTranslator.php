@@ -31,7 +31,7 @@ class DefaultValidatorTranslator implements ValidatorTranslatorInterface
     /**
      * {@inheritdoc}
      */
-    public function trans($id, array $parameters = []): string
+    public function trans(string $id, array $parameters = []): string
     {
         if (isset($this->texts[$id])) {
             return strtr($this->texts[$id], $parameters);
