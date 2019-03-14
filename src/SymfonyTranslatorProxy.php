@@ -1,4 +1,4 @@
-<?php
+<?php declare(strict_types=1);
 /**
  * Validation.
  *
@@ -8,7 +8,7 @@
 
 namespace Starlit\Validation;
 
-use Symfony\Component\Translation\TranslatorInterface as SymfonyTranslatorInterface;
+use Symfony\Contracts\Translation\TranslatorInterface as SymfonyTranslatorInterface;
 
 class SymfonyTranslatorProxy implements ValidatorTranslatorInterface
 {
@@ -28,7 +28,7 @@ class SymfonyTranslatorProxy implements ValidatorTranslatorInterface
     /**
      * {@inheritdoc}
      */
-    public function trans($id, array $parameters = [])
+    public function trans(string $id, array $parameters = []): string
     {
         return $this->symfonyTranslator->trans($id, $parameters);
     }
