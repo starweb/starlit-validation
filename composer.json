@@ -5,7 +5,7 @@
     "keywords": ["validation", "validator"],
     "homepage": "http://github.com/starweb/starlit-validation",
     "license": "BSD-3-Clause",
-    "version": "1.0.x-dev",
+    "version": "1.0.0",
     "authors": [
         {
             "name": "Starweb AB"
