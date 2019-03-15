@@ -1,17 +1,18 @@
-<?php
+<?php declare(strict_types=1);
 
 namespace Starlit\Validation;
 
-use Symfony\Component\Translation\TranslatorInterface;
+use PHPUnit\Framework\TestCase;
+use Symfony\Contracts\Translation\TranslatorInterface;
 
-class ValidatorTest extends \PHPUnit_Framework_TestCase
+class ValidatorTest extends TestCase
 {
     /**
      * @var Validator
      */
     private $validator;
 
-    public function setUp()
+    public function setUp(): void
     {
         $rules = [];
         $rules['someField']['minLength'] = 5;
@@ -20,24 +21,36 @@ class ValidatorTest extends \PHPUnit_Framework_TestCase
         $this->validator = new Validator($rules);
     }
 
-    public function testOtherValidConstructions()
+    /**
+     * @dataProvider provideValidValidatorTranslators
+     */
+    public function testOtherValidConstructions(string $translatorFqcn = null): void
     {
-        new Validator();
-
-        $validatorTranslatorMock = $this->createMock(ValidatorTranslatorInterface::class);
-        new Validator([], $validatorTranslatorMock);
-
-        $symfonyTranslatorMock = $this->createMock(TranslatorInterface::class);
-        new Validator([], $symfonyTranslatorMock);
+        $validatorTranslatorMock = $translatorFqcn ? $this->createMock($translatorFqcn) : null;
+        $validator = new Validator([], $validatorTranslatorMock);
+        $validatorReflection = new \ReflectionClass($validator);
+        $translatorProperty = $validatorReflection->getProperty('translator');
+        $translatorProperty->setAccessible(true);
+        $translator = $translatorProperty->getValue($validator);
+        $this->assertInstanceOf(ValidatorTranslatorInterface::class, $translator);
     }
 
-    public function testInvalidConstruction()
+    public function provideValidValidatorTranslators(): array
+    {
+        return [
+            [null],
+            [ValidatorTranslatorInterface::class],
+            [TranslatorInterface::class]
+        ];
+    }
+
+    public function testInvalidConstruction(): void
     {
         $this->expectException(\InvalidArgumentException::class);
         new Validator([], 123);
     }
 
-    public function testAddFieldsRuleProperties()
+    public function testAddFieldsRuleProperties(): void
     {
         $newFieldRules = [
             'someField' => ['maxLength' => 8],  // Will be merged
@@ -50,7 +63,7 @@ class ValidatorTest extends \PHPUnit_Framework_TestCase
         $this->assertNotEmpty($this->validator->getFieldRuleProperties('otherField'));
     }
 
-    public function testRemoveFieldRuleProperties()
+    public function testRemoveFieldRuleProperties(): void
     {
         $newFieldRules = [
             'fieldToBeRemoved' => ['required' => true],
@@ -62,7 +75,7 @@ class ValidatorTest extends \PHPUnit_Framework_TestCase
         $this->assertEmpty($this->validator->getFieldRuleProperties('fieldToBeRemoved'));
     }
 
-    public function testValidateSuccess()
+    public function testValidateSuccess(): void
     {
         $data = [
             'someField' => '12345',
@@ -72,7 +85,7 @@ class ValidatorTest extends \PHPUnit_Framework_TestCase
         $this->assertEmpty($errorMsgs);
     }
 
-    public function testGetValidatedData()
+    public function testGetValidatedData(): void
     {
         $data = [
             'someField' => ' trimmed ',
@@ -85,7 +98,7 @@ class ValidatorTest extends \PHPUnit_Framework_TestCase
         $this->assertEquals('trimmed', $this->validator->getValidatedData('someField'));
     }
 
-    public function testValidateValue()
+    public function testValidateValue(): void
     {
         $newFieldRules = [
             'otherField' => ['required' => true],
@@ -121,7 +134,7 @@ class ValidatorTest extends \PHPUnit_Framework_TestCase
         $this->assertArrayHasKey('otherField8', $errorMsgs);
     }
 
-    public function testValidateValueRulesReturnsNoErrorOnEmptyValue()
+    public function testValidateValueRulesReturnsNoErrorOnEmptyValue(): void
     {
         $ruleProperties = [
             'min' => 5,
@@ -139,7 +152,7 @@ class ValidatorTest extends \PHPUnit_Framework_TestCase
         $this->assertEmpty($errorMsgs);
     }
 
-    public function testValidateRequiredValueReturnsErrorMsg()
+    public function testValidateRequiredValueReturnsErrorMsg(): void
     {
         $errorMsgs = $this->validator->validateValue(null, ['required' => true]);
         $this->assertNotEmpty($errorMsgs);
@@ -148,7 +161,7 @@ class ValidatorTest extends \PHPUnit_Framework_TestCase
     }
 
 
-    public function testValidateRequiredValueDoesNotReturnErrorMsg()
+    public function testValidateRequiredValueDoesNotReturnErrorMsg(): void
     {
         $errorMsgs = $this->validator->validateValue(null, ['required' => false]);
         $this->assertEmpty($errorMsgs);
@@ -159,7 +172,7 @@ class ValidatorTest extends \PHPUnit_Framework_TestCase
     }
 
 
-    public function testValidateNonEmptyValueReturnsErrorMsg()
+    public function testValidateNonEmptyValueReturnsErrorMsg(): void
     {
         $errorMsgs = $this->validator->validateValue(null, ['nonEmpty' => true]);
         $this->assertNotEmpty($errorMsgs);
@@ -172,7 +185,7 @@ class ValidatorTest extends \PHPUnit_Framework_TestCase
     }
 
 
-    public function testValidateNonEmptyValueDoesNotReturnErrorMsg()
+    public function testValidateNonEmptyValueDoesNotReturnErrorMsg(): void
     {
         $errorMsgs = $this->validator->validateValue(null, ['nonEmpty' => false]);
         $this->assertEmpty($errorMsgs);
@@ -182,19 +195,19 @@ class ValidatorTest extends \PHPUnit_Framework_TestCase
         $this->assertEmpty($errorMsgs);
     }
 
-    public function testInvalidRuleRequired()
+    public function testInvalidRuleRequired(): void
     {
         $this->expectException(\InvalidArgumentException::class);
         $this->validator->validateValue(null, ['required' =>  's']);
     }
 
-    public function testInvalidRuleNonEmpty()
+    public function testInvalidRuleNonEmpty(): void
     {
         $this->expectException(\InvalidArgumentException::class);
         $this->validator->validateValue(null, ['nonEmpty' =>  's']);
     }
 
-    public function testRuleNonEmpty()
+    public function testRuleNonEmpty(): void
     {
         $errorMsgs = $this->validator->validateValue(null, ['nonEmpty' =>  true]);
         $this->assertNotEmpty($errorMsgs);
@@ -206,37 +219,37 @@ class ValidatorTest extends \PHPUnit_Framework_TestCase
         $this->assertEmpty($errorMsgs);
     }
 
-    public function testInvalidRuleMin()
+    public function testInvalidRuleMin(): void
     {
         $this->expectException(\InvalidArgumentException::class);
         $this->validator->validateValue(null, ['min' => 's']);
     }
 
-    public function testInvalidRuleMax()
+    public function testInvalidRuleMax(): void
     {
         $this->expectException(\InvalidArgumentException::class);
         $this->validator->validateValue(null, ['max' => 's']);
     }
 
-    public function testInvalidRuleMinLength()
+    public function testInvalidRuleMinLength(): void
     {
         $this->expectException(\InvalidArgumentException::class);
         $this->validator->validateValue(null, ['minLength' => 's']);
     }
 
-    public function testInvalidRuleMaxLength()
+    public function testInvalidRuleMaxLength(): void
     {
         $this->expectException(\InvalidArgumentException::class);
         $this->validator->validateValue(null, ['maxLength' => 's']);
     }
 
-    public function testInvalidRuleLength()
+    public function testInvalidRuleLength(): void
     {
         $this->expectException(\InvalidArgumentException::class);
         $this->validator->validateValue(null, ['length' => 's']);
     }
 
-    public function testRuleLength()
+    public function testRuleLength(): void
     {
         $errorMsgs = $this->validator->validateValue('asd', ['length' =>  5]);
         $this->assertNotEmpty($errorMsgs);
@@ -248,19 +261,19 @@ class ValidatorTest extends \PHPUnit_Framework_TestCase
         $this->assertEmpty($errorMsgs);
     }
 
-    public function testInvalidRuleRegexp()
+    public function testInvalidRuleRegexp(): void
     {
         $this->expectException(\InvalidArgumentException::class);
         $this->validator->validateValue(null, ['regexp' => null]);
     }
 
-    public function testInvalidRuleEmail()
+    public function testInvalidRuleEmail(): void
     {
         $this->expectException(\InvalidArgumentException::class);
         $this->validator->validateValue(null, ['email' => 's']);
     }
 
-    public function testInvalidEmailValueType()
+    public function testInvalidEmailValueType(): void
     {
         $errorMsgs = $this->validator->validateValue(['abc' => 1], ['email' => true]);
         // Invalid value type should count in value not at all, ie. no error message
@@ -268,13 +281,13 @@ class ValidatorTest extends \PHPUnit_Framework_TestCase
         $this->assertEmpty($errorMsgs);
     }
 
-    public function testInvalidDateTimeRule()
+    public function testInvalidDateTimeRule(): void
     {
         $this->expectException(\InvalidArgumentException::class);
         $this->validator->validateValue(null, ['dateTime' => 's']);
     }
 
-    public function testValidDate()
+    public function testValidDate(): void
     {
         $errorMsgs = $this->validator->validateValue('2015-10-21', ['date' => true]);
         $this->assertEmpty($errorMsgs);
@@ -283,13 +296,13 @@ class ValidatorTest extends \PHPUnit_Framework_TestCase
         $this->assertEmpty($errorMsgs);
     }
 
-    public function testInvalidDate()
+    public function testInvalidDate(): void
     {
         $errorMsgs = $this->validator->validateValue('2000-42-00', ['date' => true]);
         $this->assertNotEmpty($errorMsgs);
     }
 
-    public function testValidDateTime()
+    public function testValidDateTime(): void
     {
         $errorMsgs = $this->validator->validateValue('2015-10-21 15:00', ['dateTime' => true]);
         $this->assertEmpty($errorMsgs);
@@ -301,25 +314,25 @@ class ValidatorTest extends \PHPUnit_Framework_TestCase
         $this->assertEmpty($errorMsgs);
     }
 
-    public function testInvalidDateTime()
+    public function testInvalidDateTime(): void
     {
         $errorMsgs = $this->validator->validateValue('2015-10-21 99:99', ['dateTime' => true]);
         $this->assertNotEmpty($errorMsgs);
     }
 
-    public function testInvalidRuleCustom()
+    public function testInvalidRuleCustom(): void
     {
         $this->expectException(\InvalidArgumentException::class);
         $this->validator->validateValue(null, ['custom' => 's']);
     }
 
-    public function testInvalidRuleNone()
+    public function testInvalidRuleNone(): void
     {
         $this->expectException(\InvalidArgumentException::class);
         $this->validator->validateValue(null, ['nonExistantRule' => null]);
     }
 
-    public function testTextKeyErrorMsg()
+    public function testTextKeyErrorMsg(): void
     {
         $mockTranslator = $this->createMock(TranslatorInterface::class);
 
@@ -334,7 +347,7 @@ class ValidatorTest extends \PHPUnit_Framework_TestCase
         $this->assertEquals('Test field required.', $errorMsgs);
     }
 
-    public function testGetValidRuleProperties()
+    public function testGetValidRuleProperties(): void
     {
         $this->assertContains('required', $this->validator->getValidRuleProperties());
     }
@@ -348,7 +361,7 @@ class ValidatorTest extends \PHPUnit_Framework_TestCase
         $this->assertEmpty($errorMsgs);
     }
 
-    public function provideNullableTestValues()
+    public function provideNullableTestValues(): array
     {
         return [
             [null],
