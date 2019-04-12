@@ -259,7 +259,7 @@ class Validator
                         throw new \InvalidArgumentException("Invalid length validation rule[{$ruleContents}]");
                     }
 
-                    if ($isValueSet && mb_strlen($value) !== $ruleContents) {
+                    if ($isValueSet && mb_strlen((string) $value) !== $ruleContents) {
                         $errorMsg = $this->translator->trans(
                             'errorFieldMustBeXLength',
                             ['%field%' => $fieldName, '%numberOf%' => $ruleContents]
