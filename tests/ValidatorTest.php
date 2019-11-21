@@ -134,6 +134,57 @@ class ValidatorTest extends TestCase
         $this->assertArrayHasKey('otherField8', $errorMsgs);
     }
 
+    public function testValidateIntValueWithMinLengthRules(): void
+    {
+        $newFieldRules = [
+            'stringField' => [
+                'required' => true,
+                'minLength'  => 10,
+            ],
+        ];
+        $this->validator->addFieldsRuleProperties($newFieldRules);
+
+        $data = [
+            'stringField' => 12
+        ];
+        $errorMsgs = $this->validator->validate($data);
+        $this->assertEmpty($errorMsgs);
+    }
+
+    public function testValidateIntValueWithMaxLengthRules(): void
+    {
+        $newFieldRules = [
+            'stringField' => [
+                'required' => true,
+                'maxLength'  => 40,
+            ],
+        ];
+        $this->validator->addFieldsRuleProperties($newFieldRules);
+
+        $data = [
+            'stringField' => 4
+        ];
+        $errorMsgs = $this->validator->validate($data);
+        $this->assertEmpty($errorMsgs);
+    }
+
+    public function testValidateIntValueWithLengthRules(): void
+    {
+        $newFieldRules = [
+            'stringField' => [
+                'required' => true,
+                'length'  => 4,
+            ],
+        ];
+        $this->validator->addFieldsRuleProperties($newFieldRules);
+
+        $data = [
+            'stringField' => 4
+        ];
+        $errorMsgs = $this->validator->validate($data);
+        $this->assertEmpty($errorMsgs);
+    }
+
     public function testValidateValueRulesReturnsNoErrorOnEmptyValue(): void
     {
         $ruleProperties = [
