@@ -233,7 +233,7 @@ class Validator
                         throw new \InvalidArgumentException("Invalid min length validation rule[{$ruleContents}]");
                     }
 
-                    if ($isValueSet && mb_strlen($value) < $ruleContents) {
+                    if ($isValueSet && is_string($value) && mb_strlen($value) < $ruleContents) {
                         $errorMsg = $this->translator->trans(
                             'errorFieldMustBeMinXLength',
                             ['%field%' => $fieldName, '%numberOf%' => $ruleContents]
@@ -246,7 +246,7 @@ class Validator
                         throw new \InvalidArgumentException("Invalid max length validation rule[{$ruleContents}]");
                     }
 
-                    if ($isValueSet && mb_strlen($value) > $ruleContents) {
+                    if ($isValueSet && is_string($value) && mb_strlen($value) > $ruleContents) {
                         $errorMsg = $this->translator->trans(
                             'errorFieldMustBeMaxXLength',
                             ['%field%' => $fieldName, '%numberOf%' => $ruleContents]
@@ -259,7 +259,7 @@ class Validator
                         throw new \InvalidArgumentException("Invalid length validation rule[{$ruleContents}]");
                     }
 
-                    if ($isValueSet && mb_strlen((string) $value) !== $ruleContents) {
+                    if ($isValueSet && is_string($value) && mb_strlen($value) !== $ruleContents) {
                         $errorMsg = $this->translator->trans(
                             'errorFieldMustBeXLength',
                             ['%field%' => $fieldName, '%numberOf%' => $ruleContents]
