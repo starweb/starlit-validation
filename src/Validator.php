@@ -305,10 +305,16 @@ class Validator
                     }
 
                     if ($ruleContents && $isValueSet) {
-                        $isValueOk = function ($format) use ($value) {
-                            return (\DateTime::createFromFormat($format, $value) !== false
-                                && !\DateTime::getLastErrors()["warning_count"]
-                                && !\DateTime::getLastErrors()["error_count"]);
+                        $dateTimeHasNoLastErrors = function () {
+                            return \DateTime::getLastErrors() === false ||
+                                (
+                                    !\DateTime::getLastErrors()["warning_count"] &&
+                                    !\DateTime::getLastErrors()["error_count"]
+                                );
+                        };
+
+                        $isValueOk = function ($format) use ($value, $dateTimeHasNoLastErrors) {
+                            return \DateTime::createFromFormat($format, $value) !== false && $dateTimeHasNoLastErrors();
                         };
 
                         // Allow datetime with and without seconds
